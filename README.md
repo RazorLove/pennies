@@ -6,7 +6,7 @@ Pennies: A Virtual Piggy Bank.
 
 *1,000,000,000 total Proof of Work coins, no halving, no special blocks.
 
-*1 Minute Block Targeting, 1 Week Difficulty Retargetting max of 2x adjustment.
+*1 Minute Block Targeting, 1 Week NFactor Retargetting, Progressive diff adjustment.
 
 *7 Day Coin-Age for Proof of Stake Minting, full coin age after a fortnight.
 
