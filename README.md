@@ -27,6 +27,12 @@ pool minting work if the block reward is 1 and it can't be broken down? Pennies 
 to be simple to use, save, and transfer for beginners--and simultaneously enable advanced 
 crypto-currency users quick, non-nonsense interaction via Command Line Banking.
 
+CHANGELOG:
+
 As of release 0.9.2, The Piggy Bank includes QR code support.
+
+As of release 0.9.3, The Piggy Banks has been translated in to multiple languages.
+
 As of release 0.9.4, The Piggy Bank has a fork in place reducing interest payouts by a factor of 100.
-The fork is set to occur on Midnight GMT, All Hallow's Eve, 2013.
+The fork is set to occur on Midnight GMT, All Hallow's Eve, 2013. Also new in this release is the 
+ability to mint coins using the command "mintpennies true" in Command Line Banking.
