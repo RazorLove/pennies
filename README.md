@@ -29,4 +29,4 @@ crypto-currency users quick, non-nonsense interaction via Command Line Banking.
 
 As of release 0.9.2, The Piggy Bank includes QR code support.
 As of release 0.9.4, The Piggy Bank has a fork in place reducing interest payouts by a factor of 100.
-As of release 0.4.4, The fork is set to occur on Midnight GMT, All Hallow's Eve, 2013.
+The fork is set to occur on Midnight GMT, All Hallow's Eve, 2013.
