@@ -312,10 +312,10 @@ void RPCConsole::clear()
                 "b { color: #006060; } "
                 );
 
-    message(CMD_REPLY, (tr("<b><u>Welcome to the Pennies Command Line Banking Virtual Teller System!</b></u>") + "<br><br>" +
+    message(CMD_REPLY, (tr("<b><u>Welcome to the Piggy Bank Virtual Teller System!</b></u>") + "<br><br>" +
                         tr("Type <b>help</b> for an overview of available commands.") + "<br>" +
-                        tr("To start minting pennies now, type: <b>setgenerate true</b>.") + "<br>" +
-                        tr("To stop minting pennies, type: <b>setgenerate false</b>.")), true);
+                        tr("To start minting pennies now, type: <b>mintpennies true</b>.") + "<br>" +
+                        tr("To stop minting pennies, type: <b>mintpennies false</b>.")), true);
 }
 
 void RPCConsole::message(int category, const QString &message, bool html)

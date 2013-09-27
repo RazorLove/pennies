@@ -285,21 +285,17 @@ void BitcoinGUI::createMenuBar()
 #endif
 
     // Configure the menus
-    QMenu *file = appMenuBar->addMenu(tr("&File"));
+    QMenu *file = appMenuBar->addMenu(tr("&Actions"));
     file->addAction(backupWalletAction);
-    file->addAction(exportAction);
+    file->addAction(encryptWalletAction);
     file->addAction(signMessageAction);
     file->addAction(verifyMessageAction);
+    file->addAction(changePassphraseAction);
     file->addSeparator();
+    file->addAction(optionsAction);
     file->addAction(quitAction);
-
-    QMenu *settings = appMenuBar->addMenu(tr("&Settings"));
-    settings->addAction(encryptWalletAction);
-    settings->addAction(changePassphraseAction);
-    settings->addSeparator();
-    settings->addAction(optionsAction);
-
-    QMenu *help = appMenuBar->addMenu(tr("&Help"));
+    
+    QMenu *help = appMenuBar->addMenu(tr("&About"));
     help->addAction(aboutAction);
     help->addAction(aboutQtAction);
 }
