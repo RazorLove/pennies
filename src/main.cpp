@@ -41,7 +41,6 @@ unsigned int nStakeMinAge = 60 * 60 * 24 * 7; // minimum age for coin age
 unsigned int nStakeMaxAge = 60 * 60 * 24 * 14; // stake age of full weight
 unsigned int nStakeTargetSpacing = 1 * 60; // DIFF: 1-minute block spacing
 int64 nChainStartTime = 1375418800;
-int64 currentTime = GetTime();
 int nCoinbaseMaturity = 5;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -991,8 +990,8 @@ int64 GetProofOfStakeReward(int64 nCoinAge)
 {
     static int64 nRewardCoinYear = 1;  // creation amount per coin-year
     int64 nSubsidy = nCoinAge * 1 * nRewardCoinYear;
-    
-    if(currentTime > 1383220800) //Fork at Midnight, All Hallow's Eve, 2013.
+    int64 currentTime = GetTime();
+    if(currentTime > 1383220800) //Fork at Mid-day, All Hallow's Eve, 2013.
     	{nSubsidy = nCoinAge * .01 * nRewardCoinYear;} // 1% of the old stake; but hey still 7 days and a fortnight.
     
     if (fDebug && GetBoolArg("-printcreation"))
