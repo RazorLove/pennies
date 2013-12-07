@@ -1,5 +1,7 @@
 Pennies: A Virtual Piggy Bank and Indivisible Crypto Currency.
 
+[![Build Status](https://travis-ci.org/RazorLove/pennies.png?branch=master)](https://travis-ci.org/RazorLove/pennies)
+
 *Based on Scrypt-Jane for CPU centric mining.
 
 *No decimals, every CENT is a single, indivisible unit.
@@ -36,3 +38,6 @@ As of release 0.9.3, The Piggy Banks has been translated in to multiple language
 As of release 0.9.4, The Piggy Bank has a fork in place reducing interest payouts by a factor of 100.
 The fork is set to occur on Midnight GMT, All Hallow's Eve, 2013. Also new in this release is the 
 ability to mint coins using the command "mintpennies true" in Command Line Banking.
+
+As of 0.9.6, the Piggy Bank has returned interest to its previous levels, temporarily. Coin Control
+has also been added to the Bank.
