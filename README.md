@@ -1,6 +1,8 @@
-Pennies: A Virtual Piggy Bank and Indivisible Crypto Currency.
+Pennies: A Virtual Piggy Bank and Indivisible Crypto Currency. 
 
 [![Build Status](https://travis-ci.org/RazorLove/pennies.png?branch=master)](https://travis-ci.org/RazorLove/pennies)
+
+>>>THIS COIN IS SERIOUSLY BROKEN
 
 *Based on Scrypt-Jane for CPU centric mining.
 
