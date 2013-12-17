@@ -989,10 +989,14 @@ int64 GetProofOfStakeReward(int64 nCoinAge)
 {
     static int64 nRewardCoinYear = 1;  // creation amount per coin-year
     int64 nSubsidy = nCoinAge * 1 * nRewardCoinYear;
-    //int64 currentTime = GetTime();
-    //if(currentTime > 1383220800) //Fork at Mid-day, All Hallow's Eve, 2013.
-    //	{nSubsidy = nCoinAge * .01 * nRewardCoinYear;} // 1% of the old stake; but hey still 7 days and a fortnight.
-    // well shit, that didn't work so well, did it? Bummer. Ok, on to the next idea, for now roll it back.
+
+    // Reduce stake drastically 7 days after we stop accepting connections/blocks from
+    // older clients. (8th January 2014 at 00:00:00 GMT)
+    int64 currentTimestamp = GetTime();
+    if(currentTimestamp >= 1389139200)
+    {
+        nSubsidy = nCoinAge * 0.0001 * nRewardCoinYear;
+    }
     if (fDebug && GetBoolArg("-printcreation"))
         {printf("GetProofOfStakeReward(): create=%s nCoinAge=%"PRI64d"\n", FormatMoney(nSubsidy).c_str(), nCoinAge);}
           
@@ -2850,6 +2854,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         }
 
         int64 nTime;
+        bool badVersion = false;
+        int64 currentTimestamp = GetTime();
         CAddress addrMe;
         CAddress addrFrom;
         uint64 nNonce = 1;
@@ -2858,6 +2864,22 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         {
             // Since February 20, 2012, the protocol is initiated at version 209,
             // and earlier versions are no longer supported
+            printf("partner %s using obsolete version %i; disconnecting\n", pfrom->addr.ToString().c_str(), pfrom->nVersion);
+            pfrom->fDisconnect = true;
+            return false;
+        }
+
+        // Start disconnecting older client versions from 01/01/2014 @ 00:00:00 GMT
+        if(currentTimestamp >= 1388534400)
+        {
+            if(pfrom->nVersion < 70000)
+            {
+                badVersion = true;
+            }
+        }
+
+        if(badVersion)
+        {
             printf("partner %s using obsolete version %i; disconnecting\n", pfrom->addr.ToString().c_str(), pfrom->nVersion);
             pfrom->fDisconnect = true;
             return false;
@@ -2929,16 +2951,36 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 
         // Ask the first connected node for block updates
         static int nAskedForBlocks = 0;
-        if (!pfrom->fClient && !pfrom->fOneShot &&
-            (pfrom->nStartingHeight > (nBestHeight - 144)) &&
-            (pfrom->nVersion < NOBLKS_VERSION_START ||
-             pfrom->nVersion >= NOBLKS_VERSION_END) &&
-             (nAskedForBlocks < 1 || vNodes.size() <= 1))
-        {
-            nAskedForBlocks++;
-            pfrom->PushGetBlocks(pindexBest, uint256(0));
-        }
 
+        // Only accept blocks from older client versions until the
+        // update deadline of 1st January 2014 at 00:00:00 GMT.
+        // After the deadline, only accept blocks from protocol
+        // version 70000 or above.
+        if(currentTimestamp<1388534400)
+        {
+            if (!pfrom->fClient && !pfrom->fOneShot &&
+                (pfrom->nStartingHeight > (nBestHeight - 144)) &&
+                (pfrom->nVersion < NOBLKS_VERSION_START ||
+                 pfrom->nVersion >= NOBLKS_VERSION_END) &&
+                 (nAskedForBlocks < 1 || vNodes.size() <= 1))
+            {
+                nAskedForBlocks++;
+                pfrom->PushGetBlocks(pindexBest, uint256(0));
+            }
+        }
+        else
+        {
+            if (!pfrom->fClient && !pfrom->fOneShot &&
+                (pfrom->nStartingHeight > (nBestHeight - 144)) &&
+                (pfrom->nVersion < NOBLKS_VERSION_START ||
+                 pfrom->nVersion >= NOBLKS2014_VERSION_END) &&
+                 (nAskedForBlocks < 1 || vNodes.size() <= 1))
+            {
+                nAskedForBlocks++;
+                pfrom->PushGetBlocks(pindexBest, uint256(0));
+            }
+        }
+        
         // Relay alerts
         {
             LOCK(cs_mapAlerts);
