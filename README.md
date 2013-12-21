@@ -2,7 +2,23 @@ Pennies: A Virtual Piggy Bank and Indivisible Crypto Currency.
 
 [![Build Status](https://travis-ci.org/RazorLove/pennies.png?branch=master)](https://travis-ci.org/RazorLove/pennies)
 
->>>THIS COIN IS SERIOUSLY BROKEN
+*****
+
+**The latest update requires all users to update to the client version v0.10.0.0
+before January 1st 2014 at 00:00:00 GMT after which:**
+
+Older client versions will no longer be able to initiate a connection to
+this version.
+
+This version will no longer accept blocks from any older versions that
+remain connected in the interim.
+
+Seven days after older versions are disconnected (8th January 2014 at
+00:00:00 GMT) the new stake percentage will take effect. This will be a
+massive reduction to prevent further over inflation from this point
+forward.
+
+*****
 
 *Based on Scrypt-Jane for CPU centric mining.
 
@@ -43,3 +59,5 @@ ability to mint coins using the command "mintpennies true" in Command Line Banki
 
 As of 0.9.6, the Piggy Bank has returned interest to its previous levels, temporarily. Coin Control
 has also been added to the Bank.
+
+0.10.0 Fixes the stake issues, set to take effect on Jan 8th.
