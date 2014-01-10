@@ -985,15 +985,14 @@ int64 GetProofOfWorkReward(unsigned int nBits)
 }
 
 // ppcoin: miner's coin stake is rewarded based on coin age spent (coin-days)
-int64 GetProofOfStakeReward(int64 nCoinAge)
+int64 GetProofOfStakeReward(int64 nCoinAge, int64 nCurrentHeight)
 {
     static int64 nRewardCoinYear = 1;  // creation amount per coin-year
     int64 nSubsidy = nCoinAge * 1 * nRewardCoinYear;
 
-    // Reduce stake drastically 7 days after we stop accepting connections/blocks from
-    // older clients. (8th January 2014 at 00:00:00 GMT)
-    int64 currentTimestamp = GetTime();
-    if(currentTimestamp >= 1389139200)
+    // Now that we have a block number reduced rewards started use this
+    // instead. This should prevent syncing issues going forward.
+    if(nCurrentHeight >= 242825)
     {
         nSubsidy = nCoinAge * 0.0001 * nRewardCoinYear;
     }
@@ -1392,7 +1391,7 @@ bool CTransaction::ConnectInputs(CTxDB& txdb, MapPrevTx inputs,
             if (!GetCoinAge(txdb, nCoinAge))
                 return error("ConnectInputs() : %s unable to get coin age for coinstake", GetHash().ToString().substr(0,10).c_str());
             int64 nStakeReward = GetValueOut() - nValueIn;
-            if (nStakeReward > GetProofOfStakeReward(nCoinAge) - GetMinFee() + MIN_TX_FEE)
+            if (nStakeReward > GetProofOfStakeReward(nCoinAge, pindexBlock->nHeight) - GetMinFee() + MIN_TX_FEE)
                 return DoS(100, error("ConnectInputs() : %s stake reward exceeded", GetHash().ToString().substr(0,10).c_str()));
         }
         else
@@ -2869,13 +2868,10 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
             return false;
         }
 
-        // Start disconnecting older client versions from 01/01/2014 @ 00:00:00 GMT
-        if(currentTimestamp >= 1388534400)
+        // Disconnect any versions older than Pennies 0.10.0.0
+        if(pfrom->nVersion < 70000)
         {
-            if(pfrom->nVersion < 70000)
-            {
-                badVersion = true;
-            }
+            badVersion = true;
         }
 
         if(badVersion)
@@ -2952,33 +2948,14 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         // Ask the first connected node for block updates
         static int nAskedForBlocks = 0;
 
-        // Only accept blocks from older client versions until the
-        // update deadline of 1st January 2014 at 00:00:00 GMT.
-        // After the deadline, only accept blocks from protocol
-        // version 70000 or above.
-        if(currentTimestamp<1388534400)
+        if (!pfrom->fClient && !pfrom->fOneShot &&
+            (pfrom->nStartingHeight > (nBestHeight - 144)) &&
+            (pfrom->nVersion < NOBLKS_VERSION_START ||
+             pfrom->nVersion >= NOBLKS_VERSION_END) &&
+             (nAskedForBlocks < 1 || vNodes.size() <= 1))
         {
-            if (!pfrom->fClient && !pfrom->fOneShot &&
-                (pfrom->nStartingHeight > (nBestHeight - 144)) &&
-                (pfrom->nVersion < NOBLKS_VERSION_START ||
-                 pfrom->nVersion >= NOBLKS_VERSION_END) &&
-                 (nAskedForBlocks < 1 || vNodes.size() <= 1))
-            {
-                nAskedForBlocks++;
-                pfrom->PushGetBlocks(pindexBest, uint256(0));
-            }
-        }
-        else
-        {
-            if (!pfrom->fClient && !pfrom->fOneShot &&
-                (pfrom->nStartingHeight > (nBestHeight - 144)) &&
-                (pfrom->nVersion < NOBLKS_VERSION_START ||
-                 pfrom->nVersion >= NOBLKS2014_VERSION_END) &&
-                 (nAskedForBlocks < 1 || vNodes.size() <= 1))
-            {
-                nAskedForBlocks++;
-                pfrom->PushGetBlocks(pindexBest, uint256(0));
-            }
+            nAskedForBlocks++;
+            pfrom->PushGetBlocks(pindexBest, uint256(0));
         }
         
         // Relay alerts
