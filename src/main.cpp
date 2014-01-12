@@ -985,14 +985,14 @@ int64 GetProofOfWorkReward(unsigned int nBits)
 }
 
 // ppcoin: miner's coin stake is rewarded based on coin age spent (coin-days)
-int64 GetProofOfStakeReward(int64 nCoinAge, int64 nCurrentHeight)
+int64 GetProofOfStakeReward(int64 nCoinAge, unsigned int nTime)
 {
     static int64 nRewardCoinYear = 1;  // creation amount per coin-year
     int64 nSubsidy = nCoinAge * 1 * nRewardCoinYear;
 
     // Now that we have a block number reduced rewards started use this
     // instead. This should prevent syncing issues going forward.
-    if(nCurrentHeight >= 242825)
+    if(nTime >= 1389139200)
     {
         nSubsidy = nCoinAge * 0.0001 * nRewardCoinYear;
     }
@@ -2854,7 +2854,6 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 
         int64 nTime;
         bool badVersion = false;
-        int64 currentTimestamp = GetTime();
         CAddress addrMe;
         CAddress addrFrom;
         uint64 nNonce = 1;
